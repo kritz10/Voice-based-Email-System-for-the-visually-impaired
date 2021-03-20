@@ -155,8 +155,20 @@ class ReadMailView(generic.FormView):
     def get(self, request, *args, **kwargs):
         services = MailManager()
         profileinfo = services.service.users().getProfile(userId='me').execute()
-        message = services.service.users().messages().get(userId='me', id=self.kwargs['messageid']).execute()
-        return render(request, self.template_name,{'profileInfo': profileinfo, 'message': message, 'form': self.form_class,'appname':'VoiceMail'})
+        message = services.service.users().messages().get(userId='me', id=self.kwargs['messageid'], format="full").execute()
+
+        # Get value of 'payload' from dictionary 'txt'
+        payload = message['payload']
+        # The Body of the message is in Encrypted format. So, we have to decode it.
+        # Get the data and decode it with base 64 decoder.
+        parts = payload.get('parts')[0]
+        data = parts['body']['data']
+        data = data.replace("-","+").replace("_","/")
+        decoded_data = base64.b64decode(data)
+        body = decoded_data.decode("utf-8")
+        print(body)
+
+        return render(request, self.template_name,{'profileInfo': profileinfo, 'message': message, 'body':body,'form': self.form_class,'appname':'VoiceMail'})
 
     def form_valid(self, form):
         services = MailManager()
