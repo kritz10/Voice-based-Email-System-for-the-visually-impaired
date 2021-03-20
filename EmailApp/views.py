@@ -21,8 +21,9 @@ class HandleRecognizedSpeech(generic.View):
 
     def get(self,request):
         data = None
-        if "open email with number" in request.GET.get('post_id'):
-            replaced = request.GET.get('post_id').replace("open email with number ","")
+        if "open email with number" in request.GET.get('post_id').lower():
+            replaced = request.GET.get('post_id').lower().replace("open email with number ","")
+            print('Atleast we reached here')
             services = MailManager()
             if str.isdigit(replaced):
                 number = int(replaced)
@@ -45,7 +46,6 @@ class HandleRecognizedSpeech(generic.View):
         else:
             data = {"message":"error"}
         return JsonResponse(data,safe=False)
-
 
 class HandleAjaxSubmit(generic.View):
 

@@ -88,6 +88,10 @@ recognition.onend = function() {
     }
     else if(final.slice(0,15) =="send this email")
     {
+        messageReader("sender",id_receivers.value);
+        messageReader("subject",id_subject.value);
+        messageReader("Message Body",id_message.value);
+        
         console.log("submitted");
         $.ajax(
                     {
@@ -104,7 +108,7 @@ recognition.onend = function() {
                                     location.replace("http://127.0.0.1:8000/");
                                 }
                             }
-        })
+        });
     }
     else
     {
