@@ -28,76 +28,72 @@
     }
 </script>
    <main id="main" onclick="messageReader('','');">
-       <br><br><br>
+       
        <script>messageReader("information","Click anywhere on page to listen again. After reading, I will download attachment for you and redirect you to inbox.");</script>
-       <div class="action-bar">
+       
+       <div class="action-bar" style="padding-top: 50px;">
         <ul>
           <li>
               <p>
                 {% for m in message.payload.headers %}
                   {% if m.name|upper == "FROM" or m.name|lower == "from" %}
-                        SENDER  : {{m.value}}
+                    <h6 style="display: inline;">SENDER</h6>  : {{m.value}}
                         <script>messageReader("sender","{{m.value}}");</script>
                     {% endif %}
                 {% endfor %}
               </p>
           </li>
         </ul>
-      </div>
+       </div>
        <div class="action-bar">
         <ul>
           <li>
-              <p>
-                {% for m in message.payload.headers %}
-                  {% if m.name|upper == "SUBJECT" or m.name|lower == "subject" %}
-                        SUBJECT  : {{m.value}}
-                        <script>messageReader("subject","{{m.value}}");</script>
-                    {% endif %}
-                {% endfor %}
-              </p>
-          </li>
-        </ul>
+          <p>
+            {% for m in message.payload.headers %}
+              {% if m.name|upper == "SUBJECT" or m.name|lower == "subject" %}
+                <h6 style="display: inline;">SUBJECT</h6>  : {{m.value}}
+                    <script>messageReader("subject","{{m.value}}");</script>
+                {% endif %}
+            {% endfor %}
+          </p>
+        </li>
+       </div>
+       <div class="action-bar">
+        <ul>
+        <li>
+          <p>
+            {% for m in message.payload.headers %}
+               {% if m.name|upper == "DATE" or m.name|lower == "date" %}
+                    <h6 style="display: inline;">RECEIVE TIME</h6>  : {{m.value}}
+                {% endif %}
+            {% endfor %}
+          </p>
+      </li>
+    </ul>
       </div>
+      
+       
+          
+      </div>
+       
        <div class="action-bar">
         <ul>
           <li>
-              <p>
-                {% for m in message.payload.headers %}
-                   {% if m.name|upper == "DATE" or m.name|lower == "date" %}
-                        RECEIVE TIME  : {{m.value}}
-                    {% endif %}
-                {% endfor %}
-              </p>
-          </li>
-        </ul>
-      </div>
-       <div class="action-bar">
-        <ul>
-          <li><button onclick="showform()" style="color:blue;">GIVE ANSWER TO THIS EMAIL</button></li>
-        </ul>
-      </div>
-       <div class="action-bar">
-        <ul>
-          <li>
-              <h1>MESSAGE :</h1><br><br>
+              <h6>MESSAGE :</h6><br>
               <p>
                 <script>messageReader("Message","{{message.snippet}}");</script>
                 {{body}}
               </p>
-              <br><br>
-              <p>
-                  ATTACHMENTS:
-                  {% for m in message.payload.parts %}
-                  {% if m.filename and m.body.attachmentId %}
-                    <a href='{% url "EmailApp:download" messageId=message.threadId %}' target="_blank" download>{{m.filename}}</a>
-                    <script>window.open('{% url "EmailApp:download" messageId=message.threadId %}', '_blank');</script>
-                  {% endif %}
-                {% endfor %}
-              </p>
           </li>
         </ul>
+        
       </div>
-       <div class="action-bar" id="answerform" style="display:none;">
+      
+      <div class="action-bar">
+        <button type="button" class="btn btn-primary" onclick="showform()">REPLY TO THIS MAIL</button>
+      </div>
+      
+      <div class="action-bar" id="answerform" >
            <ul>
             <li>
                 <br><br><br>

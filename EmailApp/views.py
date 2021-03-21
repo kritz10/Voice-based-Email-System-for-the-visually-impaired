@@ -9,7 +9,7 @@ import os
 import base64
 from .sentences import recognizedsentences
 from word2number import w2n
-
+import re
 
 def handle_uploaded_file( f):
     with open(MEDIA_ROOT + '/EmailApp/attachments/' + f, 'wb+') as destination:
@@ -155,18 +155,35 @@ class ReadMailView(generic.FormView):
     def get(self, request, *args, **kwargs):
         services = MailManager()
         profileinfo = services.service.users().getProfile(userId='me').execute()
+        #print(profileinfo)
         message = services.service.users().messages().get(userId='me', id=self.kwargs['messageid'], format="full").execute()
-
         # Get value of 'payload' from dictionary 'txt'
         payload = message['payload']
+
+        #print(payload)
         # The Body of the message is in Encrypted format. So, we have to decode it.
         # Get the data and decode it with base 64 decoder.
-        parts = payload.get('parts')[0]
-        data = parts['body']['data']
-        data = data.replace("-","+").replace("_","/")
-        decoded_data = base64.b64decode(data)
-        body = decoded_data.decode("utf-8")
-        print(body)
+        body=""
+        if(payload['mimeType']=='multipart/alternative'):
+            parts = payload.get('parts')
+            print(len(parts))
+            part =parts[0]
+            #print(part)
+            data = part['body']['data']
+            data = data.replace("-","+").replace("_","/")
+            decoded_data = base64.b64decode(data)
+            #print(data.decode("utf-8"))
+            x=decoded_data.decode("utf-8")
+            cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+            cleantext = re.sub(cleanr, '', x)
+            body += cleantext
+            
+        else:
+            data = payload['body']['data']
+            data = data.replace("-","+").replace("_","/")
+            decoded_data = base64.b64decode(data)
+            body += decoded_data.decode("utf-8")
+            print(body)
 
         return render(request, self.template_name,{'profileInfo': profileinfo, 'message': message, 'body':body,'form': self.form_class,'appname':'VoiceMail'})
 

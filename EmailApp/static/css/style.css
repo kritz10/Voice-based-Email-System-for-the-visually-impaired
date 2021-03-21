@@ -126,14 +126,13 @@ a:hover {
 }
 #sidebar .compose-button {
   border-radius: 100px;
-  padding: 13px 20px;
   text-align: center;
   font-weight: 500;
   text-transform: uppercase;
   color: #61C7B3;
   border: 2px solid #61C7B3;
   display: block;
-  margin: 0 50px 30px 50px;
+  
   cursor: pointer;
 }
 #sidebar .compose-button:hover {
@@ -170,13 +169,13 @@ a:hover {
 #sidebar .menu-segment li.active a:hover {
   background: #282d36;
 }
-#sidebar .menu-segment li a {
+#sidebar .nano-content .menu-segment li a {
   display: block;
-  margin: 0 -50px 0 -70px;
-  padding: 10px 50px 10px 70px;
+  margin: 10px -15px 10px -15px;
+  padding: 10px 50px 10px 70px ;
 }
 #sidebar .menu-segment li a:hover {
-  background: #21262d;
+  background: #2a3341;
 }
 #sidebar .menu-segment li .italic-link {
   margin-left: -30px;

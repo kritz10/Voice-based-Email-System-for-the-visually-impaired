@@ -1,59 +1,96 @@
 {% extends "layout.html" %}
 {% block title %}{% endblock %}
 {% block body %}
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    
+  }
+  
+  td{
+    border: 0px solid #dddddd;
+    text-align: left;
+    padding: 18px;
+  }
+
+  th{
+    border-bottom: 1px solid #dddddd;
+    border-top:  1px solid #dddddd;
+    text-align: left;
+    padding: 18px;
+    font-weight: bolder;
+  } 
+  
+  tr:nth-child(even) {
+    background-color: #dddddd5e;
+  }
+
+  .sender{
+    font-weight: 600;
+    color: black;
+  }
+
+  .titlemain{
+    color: black;
+    font-size:x-large;
+  }
+  </style>
+  
 <main id="main">
       <div id="main-nano-wrapper" class="nano">
         <div class="nano-content">
           <div align="center" >
-            <a>
-              Welcome {{profileInfo.emailAddress}}
+            <a class="titlemain">
+              Welcome <a style="color: rgb(0, 119, 255); font-size: x-large;">{{profileInfo.emailAddress}}</a>
             </a>
           </div>
           <br>
-          <ul class="message-list">
-            <li class="unread">
-              <div class="col col-1">
-                    <p class="title">FROM</p>
-              </div>
-              <div class="col col-2">
-                    <div class="subject" >SUBJECT &nbsp;&ndash; &nbsp;<span class="teaser"> MESSAGE PREVIEW ... </span></div>
-                <div class="date">
-                DATE
-                </div>
-              </div>
-            </li>
-            {% for message in allMessages %}
-            <li class="unread">
-              <a href="{% url 'EmailApp:readmail' messageid=message.threadId %}">
-              <div class="col col-1">
-                {% for m in message.payload.headers %}
-                  {% if m.name|upper == "FROM" or m.name|lower == "from" %}
-                    <p class="title">{{m.value}}</p>
-                  {% endif %}
+          <div style="padding-left: 10px;">
+              <table>
+                <tr >
+                  <th>FROM</th>
+                  <th>SUBJECT &nbsp;&ndash; &nbsp;<span class="teaser"> MESSAGE PREVIEW ... </span></th>
+                  <th>DATE</th>
+                </tr>
+                {% for message in allMessages %}
+                  <tr>
+                    <td>
+                      {% for m in message.payload.headers %}
+                        {% if m.name|upper == "FROM" or m.name|lower == "from" %}
+                        <a class="sender" href="{% url 'EmailApp:readmail' messageid=message.threadId %}">
+                          <p class="title">{{m.value}}</p></a>
+                        {% endif %}
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {% for m in message.payload.headers %}
+                        {% if m.name|upper == "SUBJECT" or m.name|lower == "subject" %}
+                          <div class="subject">{{m.value}} &nbsp;&ndash;&nbsp; <span class="teaser">{{message.snippet | truncatewords:"20"}}</span></div>
+                        {% endif %}
+                      {% endfor %}
+                      <div class="date">
+                        <td style="white-space: nowrap;">
+                          {% for m in message.payload.headers %}
+                            {% if m.name|upper == "DATE" or m.name|lower == "date" %}
+                                {{m.value | truncatewords:"3" }}
+                            {% endif %}
+                          {% endfor %}
+                        </td>
+                      </div>
+                      
+                      
+                    </td>
+                </tr>
                 {% endfor %}
-              </div>
-              <div class="col col-2">
-                {% for m in message.payload.headers %}
-                  {% if m.name|upper == "SUBJECT" or m.name|lower == "subject" %}
-                    <div class="subject">{{m.value}} &nbsp;&ndash;&nbsp; <span class="teaser">{{message.snippet | truncatewords:"20"}}</span></div>
-                  {% endif %}
-                {% endfor %}
-                <div class="date">
-                  {% for m in message.payload.headers %}
-                  {% if m.name|upper == "DATE" or m.name|lower == "date" %}
-                      {{m.value | truncatewords:"3" }}
-                  {% endif %}
-                {% endfor %}
-                </div>
-              </div>
-              </a>
-            </li>
-            {% endfor %}
-          </ul><!--<a href="#" class="load-more-link">Show more messages</a>-->
+              </table>
+            
+            </div>
+          <!--<a href="#" class="load-more-link">Show more messages</a>-->
         </div>
       </div>
     </main>
-
 
 <button id="button" onclick="toggleStartStop()" hidden></button>
 <div style="border:dotted;padding:10px" hidden>
